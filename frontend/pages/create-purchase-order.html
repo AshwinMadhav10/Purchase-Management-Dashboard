@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Purchase Order — Purchase Management</title>
+  <meta name="description" content="Create or edit a purchase order with dynamic item rows and real-time calculations." />
+  <link rel="stylesheet" href="../css/main.css" />
+  <style>
+    .po-form-card { margin-bottom: 20px; }
+    .po-header-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    @media (max-width: 900px) { .po-header-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 600px) { .po-header-grid { grid-template-columns: 1fr; } }
+    .item-table-wrapper { min-height: 280px; }
+    .item-select-popup { position: relative; }
+    .item-dropdown {
+      position: absolute;
+      top: 100%; left: 0; right: 0;
+      background: var(--surface);
+      border: 1px solid var(--border-2);
+      border-top: none;
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 50;
+      display: none;
+    }
+    .item-dropdown.show { display: block; }
+    .item-option {
+      padding: 9px 13px;
+      cursor: pointer;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition);
+    }
+    .item-option:hover { background: var(--primary-light); }
+    .item-option-code { color: var(--text-muted); font-size: 11px; }
+    .po-form-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      padding: 20px 22px;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+  </style>
+</head>
+<body>
+<div class="app-wrapper">
+  <div class="main-content">
+    <header class="topbar">
+      <button class="hamburger" id="hamburger-btn" aria-label="Toggle sidebar">☰</button>
+      <div class="topbar-title">
+        <h1 id="page-title">Create Purchase Order</h1>
+        <p id="page-subtitle">Fill in the details below</p>
+      </div>
+      <div class="topbar-actions">
+        <a href="purchase-orders.html" class="btn btn-outline btn-sm" id="btn-cancel-po">← Back</a>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <!-- PO Header -->
+      <div class="card po-form-card">
+        <div class="card-header"><span class="card-title">📝 Order Header</span></div>
+        <div class="card-body">
+          <div class="po-header-grid">
+            <div class="form-group">
+              <label class="form-label">PO Number</label>
+              <input type="text" class="form-control" id="po-number" readonly placeholder="Auto-generated" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">PO Date <span class="required">*</span></label>
+              <input type="date" class="form-control" id="po-date" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select class="form-control" id="po-status">
+                <option value="Draft">Draft</option>
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+            <div class="form-group" style="grid-column:span 2;">
+              <label class="form-label">Supplier <span class="required">*</span></label>
+              <select class="form-control" id="po-supplier">
+                <option value="">— Select Supplier —</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Expected Delivery Date</label>
+              <input type="date" class="form-control" id="po-delivery-date" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Reference Number</label>
+              <input type="text" class="form-control" id="po-ref" placeholder="e.g. REF-2024-001" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Payment Terms</label>
+              <select class="form-control" id="po-payment-terms">
+                <option value="">— Select —</option>
+                <option>Net 15</option><option>Net 30</option><option>Net 45</option>
+                <option>Net 60</option><option>Immediate</option><option>COD</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Delivery Location</label>
+              <input type="text" class="form-control" id="po-location" placeholder="e.g. Warehouse A" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" id="po-notes" rows="2" placeholder="Additional notes or instructions…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- PO Items -->
+      <div class="card po-form-card">
+        <div class="card-header">
+          <span class="card-title">📦 Item Details</span>
+          <button class="btn btn-outline-primary btn-sm" id="btn-add-item-row">＋ Add Item</button>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div class="item-table-wrapper">
+            <table class="table po-items-table" id="po-items-table">
+              <thead>
+                <tr>
+                  <th style="width:30px;">#</th>
+                  <th style="width:180px;">Item</th>
+                  <th style="width:100px;">Item Code</th>
+                  <th style="width:200px;">Description</th>
+                  <th style="width:80px;">Qty <span class="required">*</span></th>
+                  <th style="width:70px;">Unit</th>
+                  <th style="width:120px;">Unit Price</th>
+                  <th style="width:80px;">Disc %</th>
+                  <th style="width:80px;">Tax %</th>
+                  <th style="width:120px;" class="number-cell">Line Total</th>
+                  <th style="width:40px;"></th>
+                </tr>
+              </thead>
+              <tbody id="po-items-body">
+                <!-- rows injected by JS -->
+              </tbody>
+            </table>
+          </div>
+          <div id="no-items-msg" style="padding:30px;text-align:center;color:var(--text-muted);font-size:13px;">
+            No items added yet. Click "＋ Add Item" to begin.
+          </div>
+        </div>
+      </div>
+
+      <!-- PO Summary + Additional Charges -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:20px;">
+        <div class="po-summary" style="min-width:340px;">
+          <div class="po-summary-row">
+            <span>Additional Charges</span>
+            <span><input type="number" class="form-control" id="po-additional" min="0" step="0.01" value="0" style="width:120px;text-align:right;" /></span>
+          </div>
+          <div class="po-summary-row"><span>Subtotal</span><span id="sum-subtotal">₹0.00</span></div>
+          <div class="po-summary-row"><span>Total Discount</span><span id="sum-discount" style="color:var(--danger);">- ₹0.00</span></div>
+          <div class="po-summary-row"><span>Total Tax</span><span id="sum-tax">₹0.00</span></div>
+          <div class="po-summary-row"><span>Additional Charges</span><span id="sum-additional">₹0.00</span></div>
+          <div class="po-summary-row grand"><span>Grand Total</span><span id="sum-grand">₹0.00</span></div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="po-form-actions">
+        <a href="purchase-orders.html" class="btn btn-outline" id="btn-back">Cancel</a>
+        <button class="btn btn-outline-primary" id="btn-save-draft">💾 Save as Draft</button>
+        <button class="btn btn-success" id="btn-submit-po">✅ Submit PO</button>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="../js/sidebar.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/create-purchase-order.js"></script>
+</body>
+</html>

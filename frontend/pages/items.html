@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Item Master — Purchase Management</title>
+  <meta name="description" content="Manage item master data including CRUD operations and search." />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div class="app-wrapper">
+  <div class="main-content">
+    <header class="topbar">
+      <button class="hamburger" id="hamburger-btn" aria-label="Toggle sidebar">☰</button>
+      <div class="topbar-title">
+        <h1>Item Master</h1>
+        <p>Manage your inventory items</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary btn-sm" id="btn-add-item">＋ Add Item</button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Items <span id="item-count" class="text-muted" style="font-weight:400;font-size:13px;"></span></span>
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="form-control" id="item-search" placeholder="Search items…" />
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Item ID</th>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Unit</th>
+                <th class="number-cell">Purchase Price</th>
+                <th class="number-cell">Tax %</th>
+                <th>Status</th>
+                <th class="actions-cell">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="items-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Add / Edit Item Modal -->
+<div class="modal-overlay" id="item-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="item-modal-title">Add Item</span>
+      <button class="modal-close" data-close="item-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="item-form" novalidate>
+        <input type="hidden" id="item-id" name="id" />
+        <div class="form-row cols-2">
+          <div class="form-group">
+            <label class="form-label">Item Name <span class="required">*</span></label>
+            <input type="text" class="form-control" name="name" id="if-name" placeholder="e.g. Office Chair" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <input type="text" class="form-control" name="category" id="if-category" placeholder="e.g. Furniture" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" name="description" id="if-description" rows="2" placeholder="Item description"></textarea>
+        </div>
+        <div class="form-row cols-3">
+          <div class="form-group">
+            <label class="form-label">Unit <span class="required">*</span></label>
+            <select class="form-control" name="unit" id="if-unit">
+              <option value="">— Select —</option>
+              <option value="Pcs">Pcs</option>
+              <option value="Kg">Kg</option>
+              <option value="Ltr">Ltr</option>
+              <option value="Box">Box</option>
+              <option value="Set">Set</option>
+              <option value="Pair">Pair</option>
+              <option value="Mtr">Mtr</option>
+              <option value="Nos">Nos</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Purchase Price <span class="required">*</span></label>
+            <input type="number" class="form-control" name="purchase_price" id="if-price" min="0" step="0.01" placeholder="0.00" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tax %</label>
+            <input type="number" class="form-control" name="tax" id="if-tax" min="0" max="100" step="0.01" placeholder="0" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-control" name="status" id="if-status">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="item-modal">Cancel</button>
+      <button class="btn btn-primary" id="btn-save-item">Save Item</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="../js/sidebar.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/items.js"></script>
+</body>
+</html>

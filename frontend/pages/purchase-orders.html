@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Purchase Orders — Purchase Management</title>
+  <meta name="description" content="View, manage and track all purchase orders." />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div class="app-wrapper">
+  <div class="main-content">
+    <header class="topbar">
+      <button class="hamburger" id="hamburger-btn" aria-label="Toggle sidebar">☰</button>
+      <div class="topbar-title">
+        <h1>Purchase Orders</h1>
+        <p>View and manage all purchase orders</p>
+      </div>
+      <div class="topbar-actions">
+        <a href="create-purchase-order.html" class="btn btn-primary btn-sm" id="btn-create-po">＋ Create PO</a>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <!-- Status filter chips -->
+      <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;" id="status-filters">
+        <button class="btn btn-sm btn-primary" data-status="" id="filter-all">All</button>
+        <button class="btn btn-sm btn-outline" data-status="Draft" id="filter-draft">📝 Draft</button>
+        <button class="btn btn-sm btn-outline" data-status="Pending" id="filter-pending">⏳ Pending</button>
+        <button class="btn btn-sm btn-outline" data-status="Completed" id="filter-completed">✅ Completed</button>
+        <button class="btn btn-sm btn-outline" data-status="Cancelled" id="filter-cancelled">❌ Cancelled</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Purchase Orders <span id="po-count" class="text-muted" style="font-weight:400;font-size:13px;"></span></span>
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="form-control" id="po-search" placeholder="Search by PO # or supplier…" />
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>PO Number</th>
+                <th>PO Date</th>
+                <th>Supplier</th>
+                <th>Delivery Date</th>
+                <th class="number-cell">Grand Total</th>
+                <th>Status</th>
+                <th>Created By</th>
+                <th class="actions-cell">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="po-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- View PO Modal -->
+<div class="modal-overlay" id="view-po-modal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title" id="view-po-title">Purchase Order Details</span>
+      <button class="modal-close" data-close="view-po-modal">✕</button>
+    </div>
+    <div class="modal-body" id="view-po-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="view-po-modal">Close</button>
+      <button class="btn btn-primary" id="btn-edit-from-view">✏️ Edit</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="../js/sidebar.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/purchase-orders.js"></script>
+</body>
+</html>

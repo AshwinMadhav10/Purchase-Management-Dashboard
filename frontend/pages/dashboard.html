@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Purchase Management</title>
+  <meta name="description" content="Real-time overview of purchase orders, suppliers, and items." />
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="app-wrapper">
+  <!-- Sidebar injected by sidebar.js -->
+  <div class="main-content">
+    <header class="topbar">
+      <button class="hamburger" id="hamburger-btn" aria-label="Toggle sidebar">☰</button>
+      <div class="topbar-title">
+        <h1>Dashboard</h1>
+        <p>Welcome back, Admin · <span id="today-date"></span></p>
+      </div>
+      <div class="topbar-actions">
+        <a href="create-purchase-order.html" class="btn btn-primary btn-sm" id="btn-new-po">
+          ＋ New Purchase Order
+        </a>
+      </div>
+    </header>
+
+    <main class="page-content" id="dashboard-root">
+      <!-- Stats will be injected here -->
+    </main>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="../js/sidebar.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/dashboard.js"></script>
+</body>
+</html>
