@@ -1,1 +1,14 @@
-[]
+[
+    {
+        "id": "ITM0001",
+        "code": "IC0001",
+        "name": "sdh",
+        "description": "dgdg",
+        "category": "dgdg",
+        "unit": "Kg",
+        "purchase_price": 6366,
+        "tax": 2,
+        "status": "Active",
+        "created_at": "2026-08-13 14:34:35"
+    }
+]
