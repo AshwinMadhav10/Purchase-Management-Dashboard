@@ -2,7 +2,7 @@
 // api.js — Centralized API helper for all fetch() calls
 // ============================================================
 
-const API_BASE = '../../backend/api';
+const API_BASE = '/api';
 
 const Api = {
   async request(endpoint, method = 'GET', body = null, params = {}) {
